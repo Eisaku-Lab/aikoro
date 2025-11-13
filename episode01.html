@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>愛する公爵様、謹んで殺させていただきます！ - 第1話</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* ヘッダー */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            z-index: 1000;
+            border-bottom: 1px solid #333;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .title-wrapper {
+            text-align: center;
+        }
+
+        .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            display: block;
+        }
+
+        .episode {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+            display: block;
+        }
+
+        /* メインコンテンツ */
+        .comic-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 60px;
+            background-color: #000;
+        }
+
+        .page-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .comic-page {
+            width: 100%;
+            height: auto;
+            display: block;
+            background-color: #000;
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
+        }
+
+        .comic-page.loaded {
+            opacity: 1;
+        }
+
+        /* ページインジケーター */
+        .page-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #fff;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+
+        /* コピーライト */
+        .copyright {
+            font-weight: bold;
+            background-color: #ffffff;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 15px;
+            color: #a2a2a2;
+        }
+
+        /* フッター（最下部のみ表示） */
+        .footer {
+            background-color: #ffffff;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 1px solid #ffffff;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            margin-bottom: 50px;
+        }
+
+        .next-episode-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 15px 50px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .next-episode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 10px;
+            }
+
+            .title {
+                font-size: 12px;
+            }
+
+            .episode {
+                font-size: 11px;
+            }
+
+            .page-indicator {
+                bottom: 15px;
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+
+            .next-episode-btn {
+                padding: 12px 40px;
+                font-size: 14px;
+            }
+        }
+
+        /* スムーススクロール */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-content">
+            <div class="title-wrapper">
+                <span class="title">愛する公爵様、謹んで殺させていただきます！</span>
+                <span class="episode">第1話</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- コミックコンテンツ -->
+    <main class="comic-container" id="comicContainer">
+        <!-- ページはJavaScriptで動的に生成されます -->
+    </main>
+
+    <!-- コピーライト -->
+    <div class="copyright">
+        <p>©weavin</p>
+    </div>
+
+    <!-- ページインジケーター -->
+    <div class="page-indicator" id="pageIndicator">
+        ページ <span id="currentPage">1</span> / <span id="totalPages">0</span>
+    </div>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="footer-content">
+            <a href="episode02.html" class="next-episode-btn">第2話を読む →</a>
+        </div>
+    </footer>
+
+    <script>
+        // コミック画像の設定（第1話の画像パス）
+        const comicPages = [
+            'images/episode01/aikoro_001_jpg760x1000_001.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_002.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_003.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_004.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_005.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_006.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_007.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_008.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_009.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_010.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_011.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_012.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_013.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_014.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_015.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_016.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_017.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_018.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_019.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_020.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_021.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_022.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_023.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_024.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_025.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_026.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_027.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_028.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_029.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_030.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_031.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_032.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_033.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_034.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_035.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_036.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_037.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_038.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_039.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_040.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_041.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_042.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_043.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_044.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_045.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_046.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_047.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_048.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_049.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_050.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_051.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_052.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_053.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_054.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_055.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_056.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_057.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_058.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_059.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_060.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_061.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_062.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_063.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_064.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_065.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_066.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_067.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_068.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_069.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_070.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_071.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_072.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_073.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_074.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_075.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_076.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_077.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_078.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_079.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_080.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_081.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_082.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_083.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_084.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_085.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_086.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_087.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_088.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_089.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_090.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_091.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_092.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_093.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_094.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_095.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_096.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_097.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_098.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_099.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_100.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_101.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_102.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_103.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_104.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_105.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_106.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_107.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_108.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_109.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_110.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_111.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_112.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_113.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_114.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_115.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_116.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_117.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_118.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_119.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_120.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_121.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_122.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_123.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_124.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_125.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_126.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_127.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_128.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_129.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_130.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_131.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_132.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_133.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_134.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_135.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_136.jpg',
+            'images/episode01/aikoro_001_jpg760x1000_137.jpg',
+            // 必要に応じて画像を追加
+        ];
+
+        // 初期化
+        const comicContainer = document.getElementById('comicContainer');
+        const currentPageEl = document.getElementById('currentPage');
+        const totalPagesEl = document.getElementById('totalPages');
+
+        totalPagesEl.textContent = comicPages.length;
+
+        // ページを生成
+        comicPages.forEach((imagePath, index) => {
+            const pageWrapper = document.createElement('div');
+            pageWrapper.className = 'page-wrapper';
+            pageWrapper.dataset.page = index + 1;
+
+            const img = document.createElement('img');
+            img.className = 'comic-page';
+            img.dataset.src = imagePath;
+            img.alt = `ページ ${index + 1}`;
+
+            // Intersection Observerで遅延読み込み
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.onload = () => {
+                            img.classList.add('loaded');
+                        };
+                        observer.unobserve(img);
+                    }
+                });
+            }, {
+                rootMargin: '50px'
+            });
+
+            observer.observe(img);
+
+            pageWrapper.appendChild(img);
+            comicContainer.appendChild(pageWrapper);
+        });
+
+        // スクロール位置に応じてページ番号を更新
+        let ticking = false;
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    updatePageIndicator();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
+        function updatePageIndicator() {
+            const scrollPosition = window.scrollY + window.innerHeight / 2;
+            const pages = document.querySelectorAll('.page-wrapper');
+
+            pages.forEach((page, index) => {
+                const pageTop = page.offsetTop;
+                const pageBottom = pageTop + page.offsetHeight;
+
+                if (scrollPosition >= pageTop && scrollPosition < pageBottom) {
+                    currentPageEl.textContent = index + 1;
+                }
+            });
+        }
+
+        // 初期ページ表示
+        updatePageIndicator();
+
+        // キーボードナビゲーション
+        document.addEventListener('keydown', (e) => {
+            const scrollAmount = window.innerHeight * 0.8;
+
+            if (e.key === 'ArrowDown' || e.key === ' ') {
+                e.preventDefault();
+                window.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                window.scrollBy({ top: -scrollAmount, behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+
+</html>
